@@ -1,0 +1,32 @@
+defaults:
+   run:
+      working-directory: aspnet
+
+jobs:
+    build:
+       runs-on: ubuntu-20.04
+          steps:
+           -uses: actions/checkout@v2
+           -run: dotnet restore
+           -run: dotnet build
+
+       pack:
+          runs-on: ubuntu-20.04
+          env:
+             DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN  }}
+             DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          steps:
+             -uses: actions/checkout@v2
+             -run: echo $DOCKER_TOKEN| docker login -u $DOCKER_USER  --password-stdin $DOCKER_PASSWORD
+             -run:  docker image build -f dockerfile -t dockerdemo .
+              working-directory: ../
+             -run: docker iamge tag dockerdemo magrasjc/dockerdemo
+             -run: docker iamge push magrasjc/dockerdemo
+             -run: docker logout
+             -run: docker run 8000:80
+
+       test:
+          runs-on: ubuntu-20.04
+          steps:
+             -run: dotnet test
+on: push
