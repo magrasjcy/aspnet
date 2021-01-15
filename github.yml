@@ -1,0 +1,24 @@
+defaults:
+   run:
+      working-directory: aspnet
+
+jobs:
+    build:
+       runs-on: ubuntu-20.04
+          steps:
+           -uses: actions/checkout@v2
+           -run: dotnet restore
+           -run: dotnet build
+
+       pack:
+          runs-on: ubuntu-20.04
+          steps:
+             -uses: actions/checkout@v2
+             -run:  docker build
+             -run: docker run 8000:80
+
+       test:
+          runs-on: ubuntu-20.04
+          steps:
+             -run: dotnet test
+on: push
