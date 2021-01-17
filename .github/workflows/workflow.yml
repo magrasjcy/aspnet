@@ -1,32 +1,39 @@
-defaults:
+on:
+   push
+   
+defaults:  
    run:
+      shell: bash
       working-directory: aspnet
 
 jobs:
-    build:
-       runs-on: ubuntu-20.04
-         -steps:
-            -uses: actions/checkout@v2
-            -run: dotnet restore
-            -run: dotnet build
+   build:
+      runs-on: ubuntu-20.04
+      steps:
+         - uses: actions/checkout@v2
+         - run: dotnet restore;dotnet build
+   pack:
+      name: runner
+      runs-on: ubuntu-20.04
+      steps:
+        - name: dockertest
+        - env:
+            DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN  }}
+            DOCKER_USER: ${{ secrets.DOCKER_USER }}
+            uses: actions/checkout@v2
+            working-directory: ../
+            run: echo $DOCKER_TOKEN| docker login -u $DOCKER_USER  --password-stdin $DOCKER_PASSWORD;
+                 docker image build -f dockerfile -t dockerdemo .; \
+                 docker iamge tag dockerdemo magrasjc/dockerdemo;\
+                 docker iamge push magrasjc/dockerdemo; \
+                 docker logout ;\
+                 docker run 8000:80
+                 
+   test:
+      name: basictest
+      runs-on: ubuntu-20.04
+      steps:
+        - name: clitest
+          run: 
+             dotnet test
 
-       pack:
-          runs-on: ubuntu-20.04
-          env:
-             DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN  }}
-             DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          steps:
-             -uses: actions/checkout@v2
-             -run: echo $DOCKER_TOKEN| docker login -u $DOCKER_USER  --password-stdin $DOCKER_PASSWORD
-             -run:  docker image build -f dockerfile -t dockerdemo .
-              working-directory: ../
-             -run: docker iamge tag dockerdemo magrasjc/dockerdemo
-             -run: docker iamge push magrasjc/dockerdemo
-             -run: docker logout
-             -run: docker run 8000:80
-
-       test:
-          runs-on: ubuntu-20.04
-          steps:
-             -run: dotnet test
-on: push
