@@ -2,21 +2,179 @@
   
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-
+@using com.pizzaZ.DataStore;
 @{
-    //Layout = null;
-    var orderstamp=DateTime.Now.DayOfWeek; 
+
+        //Layout = null;
+
+        var orderstamp=DateTime.Now.DayOfWeek;
+        string[] toppNames=Enum.GetNames(typeof(com.pizzaZ.DataStore.Topping));
+        // com.pizzaZ.DataStore.Pizza workPizza = new Pizza();
+        com.pizzaZ.DataStore.Pizza.ingredients _ingredients;
+
+  //         public uint halfToppCount { get; set; }
+  //  public uint ToppCount { get; set; }
+  //  public Topping[] Toppings { get; set; } = new Topping[] { };
+  //  public Topping[] HalfToppings { get; set; } = new Topping[] { };
+
 }
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width"/>
+    <meta name="viewport" content="width=device-width" />
+    <link href="PizzaZ.styles.css" rel="stylesheet">
 </head>
 <body>
-        
-    <p>What types are there</p>
-   @* @{ 
-        <input type="checkbox" name=":@Model.Name"/>
-    }*@
+    <div class="container">
+        <form method="get" action="/a/b/">
+            <div class="row">
+                <div class="col-md-4">
+
+
+                    <label for="username">what is your login?</label>
+                    <input type="text" onkeyup="var dest = document.getElementById('pastorders');" id="username" name="username" />
+                    <label for="switchtostore">Switch to Store</label>
+                    <input type="button" onclick="window.location.replace('/Store/Index');" value="switch to store" id="switchtostore" name="switchtostore" />
+                </div>
+            </div>
+            <label for="stores">Closest Stores:</label>
+            @{
+                List<string> addresses = (List<string>)ViewData["StoreListObject"];
+
+                <label for="pastOrders">Past Orders:</label>
+                <div id="pastOrders" class="col-md-0">
+
+                </div>
+                for (var indx = 0; indx < addresses.Count; indx++)
+                {
+                    <input id="store:@indx" class="store" type="radio" name=":@addresses[indx]" value=":@addresses[indx]" />
+                    <label for="store:@indx">@addresses[indx]</label>
+                }
+            }
+
+            <div class="col-md-0" id="pizzasize">
+                <label for="pizzasize">What Size?</label>
+                <input id="pizzalarge" onchange="largePizza();" type="radio" name="pizzasize" />
+                <label for="pizzalarge">Large</label>
+                <input id="pizzamedium" onchange="mediumPizza()" type="radio" name="pizzasize" />
+                <label for="pizzamedium">Medium</label>
+                <input id="pizzasmall" onchange="smallPizza();" type="radio" name="pizzasize" />
+                <label for="pizzasmall">Small</label>
+            </div>
+            <label for="pizathick">How Thick?</label>
+            <fieldset id="pizzathick">
+                <input id="pizzathin" type="radio" name="pizzathick" value="pizzathin" />
+                <label for="pizzathin">Thin</label>
+                <input id="pizzahalfthick" type="radio" name="pizzathick" value="pizzahalfthick" />
+                <label for="pizzahalfthick">HalfThick</label>
+                <input id="pizzasthick" type="radio" name="pizzathick" value="pizzathick" />
+                <label for="pizzathick">Thick</label>
+            </fieldset>
+    
+    <div class="col-md-0">
+        <label for="toppNames">Toppings:</label>
+        <fieldset id="toppNames">
+            @{ for (var indx = 0; indx < toppNames.Length; indx++)
+                {
+
+                    <input id="topping:@indx" class="topping" type="checkbox" name=":@toppNames[indx]" value="@toppNames[indx]" />
+                    <label for="topping:@indx">@toppNames[indx]</label>
+                }
+            }
+        </fieldset>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label for="halftoppNames">Half Toppings:</label>
+            <fieldset id="halftoppNames">
+                @{ for (var indx = 0; indx < toppNames.Length; indx++)
+                    {
+                        <input id="halftopping:@indx"
+                               onchange="var pay = document.getElementById('payment'); pay.innerHTML = pay.value + 0.75;" class="half-topping" type="checkbox" name="half-:@toppNames[indx]" value="half-:@toppNames[indx]" />
+                        <label for="halftopping:@indx">@toppNames[indx]</label>
+                    }
+                }
+            </fieldset>
+        </div>
+    </div>
+    <label for="quantity">Number of this pizza type:</label>
+    <input type="number" class="alert-info" value="1" id="quantity" />
+    <div class="row">
+        <label for="payment">Current Bill:</label>
+        <div class="alert-info" readonly id="payment"></div>
+    </div>
+    <input type="submit" class="alert-info" id="submit" />
+
+    </form>
+    </div>
 </body>
 </html>
+    <script>
+        function modifiers() {
+            var depth = 0, topping, halftopping;
+            var modifierstring = "", toppingcount = 0;
+ 
+            var indx;
+            for (; indx < 15 && toppingcount < 5; indx++) {
+                topping = document.getElementById("topping:$indx").isChecked;
+                if (topping == "topping:$indx") {
+                    modifierstring += "$indx:";
+                    toppingcount++;
+                }
+                halftopping = document.getElementById("halftopping:$indx").isChecked;
+                modifierstring += "H$indx:";
+
+            }
+            if (document.getElementById('pizzathick').isChecked) {
+                depth = 1; modifier = 1.32+((toppingcount-1)*0.8)+"C";
+            } else if (document.getElementById('pizzahalfthick').isChecked) {
+                depth = 2; modifierstring = 1.05+((toppingcount-1)*0.55)+"B";
+            } else if (document.getElementById('pizzathin').isChecked) {
+                depth = 3; modifierstring = 0.70+((toppingcount-1)*0.40)+"A";
+            }
+            console.log("modifierstring="+modifierstring)
+            return modifierstring;
+        }
+        function largePizza() {
+            var quantity = document.getElementById('quantity').value;
+            //alert("A" + quantity);
+            if (quantity < 1) quantity.value = 1;
+            var pay = document.getElementById('payment');
+            var upgraders = modifiers();
+            // alert(" " + upgraders.substr(0, 4));
+            let nameElement = document.createElement("h3");
+            nameElement.setAttribute("backgroundColor", "red");
+           
+            nameElement.innerHTML = upgraders.substr(0, 4) + (11.0 * quantity);
+            pay.innerHTML="";
+            pay.appendChild(nameElement);
+            //pay.innerHTML = upgraders.substr(0,4)+(11.0 * quantity);
+        }
+        function mediumPizza() {
+            var quantity = document.getElementById('quantity').value;
+           // alert("B" + quantity);
+            if (quantity < 1) quantity.value = 1;
+            var pay = document.getElementById('payment');
+            var upgraders = modifiers();
+            //alert(" " + upgraders.substr(0, 4));
+          
+            pay.innerHTML="";
+            pay.innerHTML = upgraders.substr(0, 4) + (8.50 * quantity);
+        }
+        function smallPizza(arg0) {
+            var quantity = document.getElementById('quantity').value;
+            //alert("C" + quantity);
+            if (quantity < 1) quantity.value = 1;
+            var pay = document.getElementById('payment');
+            var upgraders = modifiers();
+            //alert(" " + upgraders.substr(0, 4));
+            let nameElement = document.createElement("h3");
+            nameElement.setAttribute("backgroundColor", "red");
+            
+            nameElement.innerHTML = upgraders.substr(0, 4) + (7.0 * quantity);
+            pay.innerHTML="";
+            pay.appendChild(nameElement);
+            //pay.innerHTML = upgraders.substr(0,4)+(7.0 * quantity);
+        }
+    </script>
+

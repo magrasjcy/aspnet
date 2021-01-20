@@ -1,0 +1,23 @@
+﻿@using com.pizzaZ.DataStore;
+@{
+    ViewData["Title"] = "Home Page";
+    List<Stores>outlets=(List<Stores>)ViewData["StoreListObject"];
+    
+    for (uint indx=0;indx < (uint)outlets.Count;indx++)
+    {
+       <input type="radio" name="outlet" value="outlet@indx"/>
+    }
+}
+<form method="post" action="/a/b">
+    <label for="username">what is your login?</label>
+    <input type="text" id="username" name="username" />
+    <input type="date" id="searchdate" name="searchdate"/>
+
+    <label for="stores">Closest Stores:</label>
+    <input type="submit" name="submit" id="submit"/>
+    <div id="searchresults"/></div>
+</form>
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>

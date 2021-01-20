@@ -1,15 +1,20 @@
 using System;
 namespace  com.pizzaZ.DataStore {
-   /* [Table("Pizza")]*/
-    class Pizza {
-       public class ingredients {
-       public double UnitCost {get;set;}
-       public uint Crust {get;set;}
-       public uint Count {get;set;}
-       public uint Size  {get;set;}
+    /* [Table("Pizza")]*/
+    public class Pizza {
+        public class ingredients {
+            public double UnitCost { get; set; }
+            public uint Crust { get; set; }
+            public uint Count { get; set; }
+            public uint Size { get; set; }
+            public uint halfToppCount {get;set;}
+        public uint ToppCount {get;set;}
        public Topping[] Toppings { get; set; } = new Topping[] { };
        public Topping[] HalfToppings { get; set; } = new Topping[] { };
-       
+       public double calcCost() {
+
+                return this.UnitCost;
+            }
        public ingredients(uint arg0,uint arg1,uint arg2,Topping[] arg3,Topping[] arg4)
        {
            this.Size=arg0;

@@ -1,7 +1,7 @@
 using System;
 
-namespace com.pizzaZ.DataStore
+ namespace com.pizzaZ.DataStore
 {
-    enum Topping {artichokes,anchovies,chicken,green_peppers,mushrooms,pepporoni,red_peppers,pineapple,spinach};
+    public enum Topping {artichokes,anchovies,chicken,green_peppers,mushrooms,pepporoni,red_peppers,pineapple,spinach};
     
 }
